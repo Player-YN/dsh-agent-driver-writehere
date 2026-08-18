@@ -10,8 +10,9 @@ if (-not $chrome) { throw 'Chrome or Edge not found' }
 
 $docs = $PSScriptRoot
 $jobs = @(
-  @{ name = 'banner.png'; file = 'banner.html'; w = 1280; h = 640; scale = 2 }
-  @{ name = 'og.png'; file = 'banner.html'; w = 1280; h = 640; scale = 1 }
+  @{ name = 'banner-en.png'; file = 'banner-en.html'; w = 1280; h = 640; scale = 2 }
+  @{ name = 'banner-zh.png'; file = 'banner-zh.html'; w = 1280; h = 640; scale = 2 }
+  @{ name = 'og.png'; file = 'banner-en.html'; w = 1280; h = 640; scale = 1 }
   @{ name = 'loop.png'; file = 'loop.html'; w = 1200; h = 340; scale = 2 }
   @{ name = 'card-tree.png'; file = 'card-tree.html'; w = 1440; h = 900; scale = 2 }
 )
