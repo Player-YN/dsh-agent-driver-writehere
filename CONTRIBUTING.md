@@ -33,7 +33,8 @@ High-star DSH plugins are easy to scan: banner, one-line pitch, official `dsh pl
 1. **Topics** (Settings → General → Topics): `dsh-plugin`, `dsh`, `deepseek-harness`, `writehere`, `agent-driver`, `long-form-writing`, `cordis`.
 2. **Social preview** (Settings → General → Social preview): upload [`docs/og.png`](docs/og.png) (1280×640).
 3. **Shields**: live `github/stars` and `last-commit` badges already point at `Player-YN/dsh-agent-driver-writehere`. Do not invent star counts.
-4. **Marketplace**: this repo is a cordis bundle (`package.json` `dsh.bundle`). Root `install.ps1` / `install.sh` wrappers are convenience only; the official install is `dsh plugin add`.
+4. **Marketplace**: this repo is a single cordis bundle. Do not add `file:` workspace dependencies on the root package — `dsh plugin add github:…` resolves those against the profile directory and fails. Rebuild `lib/` with `node scripts/build.mjs` after changing host or client source.
+5. **Preset**: `WriteHereAgent` copies `presets/article-editor` into `~/.dsh/.agent-presets/` on first load if that roster slot is empty.
 
 Regenerate README images from the HTML sources:
 

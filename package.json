@@ -1,6 +1,6 @@
 {
   "name": "dsh-agent-driver-writehere",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Hierarchical long-form writing for DeepSeek Harness — WriteHERE as an agent driver, not extra ReAct tools.",
   "license": "MIT",
   "type": "module",
@@ -20,8 +20,17 @@
     "url": "https://github.com/Player-YN/dsh-agent-driver-writehere/issues"
   },
   "homepage": "https://github.com/Player-YN/dsh-agent-driver-writehere#readme",
+  "main": "./lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./agent-drivers": "./lib/agent-drivers.js",
+    "./article-tree": "./lib/article-tree.js",
+    "./writehere": "./lib/writehere.js",
+    "./package.json": "./package.json"
+  },
   "files": [
-    "packages",
+    "lib",
     "presets",
     "patches",
     "cordis.patch.yml",
@@ -29,17 +38,44 @@
     "LICENSE",
     "CITATION.cff"
   ],
+  "scripts": {
+    "build": "node scripts/build.mjs"
+  },
   "dsh": {
     "plugin": true,
     "kind": "server",
     "bundle": {
       "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "inject": [
+        "@deepseek-ai/dsh-client-locale",
+        "@deepseek-ai/dsh-client-ui-sidebar"
+      ],
+      "platform": "web"
     }
   },
   "dependencies": {
-    "@deepseek-ai/dsh-agent-drivers": "file:./packages/agent-drivers",
-    "@deepseek-ai/dsh-article-tree": "file:./packages/article-tree",
-    "@deepseek-ai/dsh-writehere": "file:./packages/writehere",
-    "@deepseek-ai/dsh-client-ui-article-tree": "file:./packages/ui-article-tree"
+    "zod": "^4.4.3"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "*",
+    "@deepseek-ai/dsh-agent": "*",
+    "@deepseek-ai/dsh-invariants": "*",
+    "@deepseek-ai/dsh-llm": "*",
+    "@deepseek-ai/dsh-scope": "*",
+    "@deepseek-ai/dsh-session": "*",
+    "@deepseek-ai/dsh-session-projection": "*",
+    "@deepseek-ai/dsh-system-prompt": "*"
+  },
+  "peerDependenciesMeta": {
+    "@deepseek-ai/cordis": { "optional": true },
+    "@deepseek-ai/dsh-agent": { "optional": true },
+    "@deepseek-ai/dsh-invariants": { "optional": true },
+    "@deepseek-ai/dsh-llm": { "optional": true },
+    "@deepseek-ai/dsh-scope": { "optional": true },
+    "@deepseek-ai/dsh-session": { "optional": true },
+    "@deepseek-ai/dsh-session-projection": { "optional": true },
+    "@deepseek-ai/dsh-system-prompt": { "optional": true }
   }
 }

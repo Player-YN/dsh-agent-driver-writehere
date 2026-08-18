@@ -1,13 +1,13 @@
 # Host-plane WriteHERE driver layer.
 # agent-drivers must exist before writehere registers the constructor.
-# ui-article-tree is a no-op on headless (no web client).
+# The root package name is the Web sidebar (dsh.client). Subpaths are host-only.
 - insert:
     - id: agent-drivers
-      name: '@deepseek-ai/dsh-agent-drivers'
+      name: dsh-agent-driver-writehere/agent-drivers
 
     - id: writehere
-      name: '@deepseek-ai/dsh-writehere'
+      name: dsh-agent-driver-writehere/writehere
       inject: [agentDrivers]
 
     - id: ui-article-tree
-      name: '@deepseek-ai/dsh-client-ui-article-tree'
+      name: dsh-agent-driver-writehere

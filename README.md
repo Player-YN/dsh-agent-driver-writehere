@@ -59,11 +59,14 @@ That is why this is an **agent driver** (`AgentLoop.prepare` can choose this con
 
 ## Install
 
-Official install:
+You need the `dsh` CLI and `pnpm` (any working DeepSeek Harness install). Then:
 
 ```sh
 dsh plugin --profile web add github:Player-YN/dsh-agent-driver-writehere
+dsh --profile web
 ```
+
+That one `add` clones this repository into the `web` profile, registers the bundle layer, and pulls `zod`. The first time the plugin loads, it copies the **article-editor** preset into `~/.dsh/.agent-presets/` if that directory is empty. New session → preset **article-editor** (技术博客博主).
 
 Pin a commit so `main` cannot move under you:
 
@@ -71,53 +74,23 @@ Pin a commit so `main` cannot move under you:
 dsh plugin --profile web add github:Player-YN/dsh-agent-driver-writehere#<sha>
 ```
 
-Copy the shipped preset into the home presets directory (the wrappers below do this for you):
-
-```sh
-# default DSH_HOME is ~/.dsh
-cp -R "$DSH_HOME/profiles/web/node_modules/dsh-agent-driver-writehere/presets/article-editor" \
-      "$DSH_HOME/.agent-presets/article-editor"
-```
-
-Restart the profile, then confirm the layer:
+Confirm the layer:
 
 ```sh
 dsh --profile web --dump-config   # look for "# == dsh-agent-driver-writehere"
 ```
 
-An npm name would be `dsh plugin --profile web add dsh-agent-driver-writehere`. That package is **not on the npm registry** yet.
-
-### Optional remote wrappers
-
-`install-remote.sh` and `install-remote.ps1` only call the official `dsh plugin add` and then copy the preset. They are not a second loader. Pin a commit, and only pipe a script you have read.
-
-```sh
-# macOS / Linux
-WRITEHERE_PLUGIN=github:Player-YN/dsh-agent-driver-writehere \
-  curl -fsSL https://raw.githubusercontent.com/Player-YN/dsh-agent-driver-writehere/main/install-remote.sh | sh
-```
-
-```powershell
-# Windows
-$env:WRITEHERE_PLUGIN = 'github:Player-YN/dsh-agent-driver-writehere'
-irm https://raw.githubusercontent.com/Player-YN/dsh-agent-driver-writehere/main/install-remote.ps1 | iex
-```
+This package is not on the npm registry yet. If a profile already composes this driver from another layer, do not add the bundle a second time.
 
 ### Local checkout
 
 ```powershell
 .\install.ps1
-# optional: .\install.ps1 -Profile web -Harness /path/to/deepseek-harness
 ```
 
 ```sh
 dsh plugin --profile web add .
-# then copy presets/article-editor → $DSH_HOME/.agent-presets/article-editor
 ```
-
-`install.ps1` copies the preset and then runs the official `dsh plugin add` on this directory.
-
-If a profile already composes this driver from another layer, do not add the bundle a second time. Registration of the same driver id is exclusive.
 
 ## Quick start
 

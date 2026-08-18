@@ -27,4 +27,4 @@
       一篇只做一个认知变化。检索、实验、推箱一律写成 task，不要自己开终端。
 
 - id: article-tree
-  name: '@deepseek-ai/dsh-article-tree'
+  name: dsh-agent-driver-writehere/article-tree

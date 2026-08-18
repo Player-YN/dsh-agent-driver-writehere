@@ -7,6 +7,7 @@ import type { Context } from '@deepseek-ai/cordis'
 import type {} from '@deepseek-ai/dsh-agent-drivers'
 import { WRITEHERE_DRIVER_ID } from './ids.ts'
 import { WriteHereAgent } from './agent.ts'
+import { installShippedPreset } from './install-preset.ts'
 import type {} from './types.ts'
 
 // Re-export the session-event augmentations: a bare `import type {}` is elided
@@ -54,6 +55,7 @@ export const inject = ['agentDrivers']
  * @param ctx - host context that already provides agentDrivers
  */
 export function apply(ctx: Context): void {
+  installShippedPreset()
   ctx.agentDrivers.register(WRITEHERE_DRIVER_ID, WriteHereAgent)
   ctx.agentDrivers.bindPreset('article-editor', WRITEHERE_DRIVER_ID)
   ctx.agentDrivers.bindPreset('xieka', WRITEHERE_DRIVER_ID)

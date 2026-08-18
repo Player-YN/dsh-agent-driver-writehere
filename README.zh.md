@@ -59,11 +59,14 @@
 
 ## 安装
 
-官方安装：
+需要本机已有 `dsh` 和 `pnpm`（能跑 DeepSeek Harness 即可）。然后：
 
 ```sh
 dsh plugin --profile web add github:Player-YN/dsh-agent-driver-writehere
+dsh --profile web
 ```
+
+这一条 `add` 会把本仓库装进 `web` profile、登记 bundle 层，并拉下 `zod`。插件第一次加载时，若 `~/.dsh/.agent-presets/article-editor` 还不存在，会把出厂 preset 拷过去。新会话选 **article-editor**（技术博客博主）。
 
 钉死某个 commit，避免 `main` 一推安装物就变：
 
@@ -71,53 +74,23 @@ dsh plugin --profile web add github:Player-YN/dsh-agent-driver-writehere
 dsh plugin --profile web add github:Player-YN/dsh-agent-driver-writehere#<sha>
 ```
 
-再把出厂 preset 拷到本机 presets 目录（下面的远程包装脚本会代做这一步）：
-
-```sh
-# DSH_HOME 默认为 ~/.dsh
-cp -R "$DSH_HOME/profiles/web/node_modules/dsh-agent-driver-writehere/presets/article-editor" \
-      "$DSH_HOME/.agent-presets/article-editor"
-```
-
-重启该 profile，并确认配置层已叠上：
+确认配置层已叠上：
 
 ```sh
 dsh --profile web --dump-config   # 应出现 "# == dsh-agent-driver-writehere"
 ```
 
-将来若发到 npm，命令会是 `dsh plugin --profile web add dsh-agent-driver-writehere`。**目前尚未发布到 npm。**
-
-### 可选的远程包装
-
-`install-remote.sh` 与 `install-remote.ps1` 只调用官方的 `dsh plugin add`，再拷一份 preset。它们不是第二套加载器。请钉 commit，并且只对你读过的脚本做管道执行。
-
-```sh
-# macOS / Linux
-WRITEHERE_PLUGIN=github:Player-YN/dsh-agent-driver-writehere \
-  curl -fsSL https://raw.githubusercontent.com/Player-YN/dsh-agent-driver-writehere/main/install-remote.sh | sh
-```
-
-```powershell
-# Windows
-$env:WRITEHERE_PLUGIN = 'github:Player-YN/dsh-agent-driver-writehere'
-irm https://raw.githubusercontent.com/Player-YN/dsh-agent-driver-writehere/main/install-remote.ps1 | iex
-```
+尚未发布到 npm。若某个 profile 已经从其他层装过本驱动，不要再加一次 bundle。
 
 ### 本地目录
 
 ```powershell
 .\install.ps1
-# 可选：.\install.ps1 -Profile web -Harness /path/to/deepseek-harness
 ```
 
 ```sh
 dsh plugin --profile web add .
-# 再把 presets/article-editor 拷到 $DSH_HOME/.agent-presets/article-editor
 ```
-
-`install.ps1` 会先拷 preset，再对本目录执行官方的 `dsh plugin add`。
-
-若某个 profile 已经从其他层装过本驱动，不要再加一次 bundle，同一 driver id 不能重复注册。
 
 ## 快速上手
 
