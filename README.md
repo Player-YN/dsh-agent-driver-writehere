@@ -26,6 +26,7 @@
 
 <p align="center">
   <a href="#what-it-is">What it is</a> ·
+  <a href="#case">Case</a> ·
   <a href="#install">Install</a> ·
   <a href="#quick-start">Quick start</a> ·
   <a href="#how-a-tick-works">How a tick works</a> ·
@@ -58,6 +59,18 @@ Long-form agents on a stock ReAct loop tend to flatten. The model outlines, then
 <p align="center"><sub>Schematic of the Web UI. Card colors match the live sidebar (write / think / task / needs-update). Not a live capture of a private session.</sub></p>
 
 That is why this is an **agent driver** (`AgentLoop.prepare` can choose this constructor), not a bag of `article_*` tools on the default loop.
+
+## Case
+
+<p>
+  <img src="docs/react-loop.jpg" alt="ReAct Loop" width="72" height="72" align="left" style="margin: 4px 16px 8px 0; border-radius: 8px;">
+  <strong>ReAct Loop</strong> is a WeChat official account that publishes technical essays with this driver. Search the name in WeChat and follow if the column is useful.
+</p>
+<br clear="all">
+
+A live topic was「什么是ReAct？」. The editor session is `WriteHereAgent` with `tools: []`. Retrieval and later typesetting are `task` cards on ordinary `standard` workers. Leaf `write` nodes append `article.md`. Publishing is **not** this package — the host scheduler only plans, updates, and composes.
+
+That is also how the loop stays general: the **tick protocol** (GetInfo → Update → Decide → execute) does not mention WeChat. The column lives in the preset persona, methodology skills, and the briefs written on `task` cards.
 
 ## Install
 

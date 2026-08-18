@@ -26,6 +26,7 @@
 
 <p align="center">
   <a href="#是什么">是什么</a> ·
+  <a href="#案例">案例</a> ·
   <a href="#安装">安装</a> ·
   <a href="#快速上手">快速上手</a> ·
   <a href="#一拍在做什么">一拍在做什么</a> ·
@@ -58,6 +59,18 @@
 <p align="center"><sub>Web 界面示意图。卡片颜色与真实侧栏一致（write / think / task / needs-update）。不是某次私人会话的实拍。</sub></p>
 
 所以它是 **Agent Driver**（`AgentLoop.prepare` 可以选的另一种构造器），不是默认循环上的 `article_*` 工具包。
+
+## 案例
+
+<p>
+  <img src="docs/react-loop.jpg" alt="ReAct Loop" width="72" height="72" align="left" style="margin: 4px 16px 8px 0; border-radius: 8px;">
+  <strong>ReAct Loop</strong> 是用本驱动写技术文的微信公众号。微信搜这个名字即可关注。
+</p>
+<br clear="all">
+
+一期成稿题目是「什么是ReAct？」。主编会话是 `WriteHereAgent`，`tools: []`。检索和之后的排版是 `task` 卡，交给普通 `standard` 工人。叶子 `write` 追加进 `article.md`。**发到公众号不是本包的事**——宿主调度器只负责规划、更新和成稿。
+
+循环之所以还能给别人用：调度拍的协议（GetInfo → Update → 决定 → 执行）里不写微信。栏目差异放在 preset 人设、方法论 skill，以及 `task` 卡上的调度单。
 
 ## 安装
 

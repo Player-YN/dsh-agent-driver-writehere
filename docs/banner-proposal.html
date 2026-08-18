@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>banner proposal</title>
+  <style>
+    html, body { margin: 0; width: 1280px; height: 640px; overflow: hidden; background: #070b14; }
+    .stage {
+      width: 1280px; height: 640px; position: relative;
+      background:
+        radial-gradient(520px 280px at 78% 42%, rgba(59,130,246,.10), transparent 70%),
+        #070b14;
+    }
+    .copy { position: absolute; left: 72px; top: 168px; width: 380px; }
+    .eyebrow {
+      letter-spacing: .22em; font-size: 11px; color: #7d8798;
+      font-family: "Segoe UI", sans-serif; text-transform: uppercase;
+    }
+    h1 {
+      margin: 22px 0 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 36px; font-weight: 500; letter-spacing: -.03em;
+      color: #f4efe4; line-height: 1.15;
+    }
+    .sub {
+      margin: 20px 0 0; font-size: 15px; line-height: 1.5; color: #9aa6bc;
+      font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      max-width: 340px;
+    }
+    .tree { position: absolute; left: 500px; top: 48px; width: 740px; height: 544px; }
+    .n {
+      position: absolute; width: 148px; height: 52px; box-sizing: border-box;
+      border-radius: 8px; padding: 6px 8px; border: 1.4px solid;
+      font-family: "Segoe UI", sans-serif;
+    }
+    .k { font-size: 9px; font-weight: 700; letter-spacing: .03em; }
+    .s { float: right; font-size: 9px; color: #94a3b8; }
+    .g { clear: both; padding-top: 8px; font-size: 12px; color: #e5e7eb; }
+    .write { background: #0f2744; border-color: #3b82f6; }
+    .write .k { color: #93c5fd; }
+    .think { background: #221a3a; border-color: #a78bfa; }
+    .think .k { color: #ddd6fe; }
+    .task { background: #0f2a22; border-color: #34d399; }
+    .task .k { color: #6ee7b7; }
+    .need { border-color: #f59e0b; border-style: dashed; }
+    .need .s { color: #fbbf24; }
+    svg.wires { position: absolute; inset: 0; width: 740px; height: 544px; pointer-events: none; }
+    .wire { fill: none; stroke: #475569; stroke-width: 1.4; }
+    .dep { fill: none; stroke: #f59e0b; stroke-width: 1.2; stroke-dasharray: 4 3; }
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <div class="copy">
+      <div class="eyebrow">DeepSeek Harness · Agent Driver</div>
+      <h1>writehere</h1>
+      <p class="sub">Heterogeneous recursive planning. The host owns the step. The editor has no tools.</p>
+    </div>
+    <div class="tree">
+      <svg class="wires" viewBox="0 0 740 544">
+        <path class="wire" d="M80,268 C130,268 130,56 180,56"/>
+        <path class="wire" d="M80,268 C130,268 130,148 180,148"/>
+        <path class="wire" d="M80,268 C130,268 130,268 180,268"/>
+        <path class="wire" d="M80,268 C130,268 130,400 180,400"/>
+        <path class="wire" d="M328,268 C378,268 378,196 428,196"/>
+        <path class="wire" d="M328,268 C378,268 378,268 428,268"/>
+        <path class="wire" d="M328,268 C378,268 378,340 428,340"/>
+        <path class="wire" d="M576,340 C610,340 610,340 620,340"/>
+        <path class="dep" d="M328,400 C378,400 378,472 428,472"/>
+      </svg>
+      <div class="n write" style="left:6px;top:242px">
+        <div class="k">WRITE · root</div><div class="s">done</div>
+        <div class="g">What is ReAct?</div>
+      </div>
+      <div class="n task" style="left:180px;top:30px">
+        <div class="k">TASK · retrieve</div><div class="s">done</div>
+        <div class="g">Original paper</div>
+      </div>
+      <div class="n think" style="left:180px;top:122px">
+        <div class="k">THINK · memo</div><div class="s">done</div>
+        <div class="g">Why the loop</div>
+      </div>
+      <div class="n write" style="left:180px;top:242px">
+        <div class="k">WRITE · body</div><div class="s">done</div>
+        <div class="g">Three-step cycle</div>
+      </div>
+      <div class="n write need" style="left:180px;top:374px">
+        <div class="k">WRITE · close</div><div class="s">needs-update</div>
+        <div class="g">When it fails</div>
+      </div>
+      <div class="n think" style="left:428px;top:170px">
+        <div class="k">THINK</div><div class="s">done</div>
+        <div class="g">What “thought” is</div>
+      </div>
+      <div class="n write" style="left:428px;top:242px">
+        <div class="k">WRITE</div><div class="s">done</div>
+        <div class="g">Action</div>
+      </div>
+      <div class="n write" style="left:428px;top:314px">
+        <div class="k">WRITE · leaf</div><div class="s">done</div>
+        <div class="g">Observation</div>
+      </div>
+      <div class="n task" style="left:428px;top:446px">
+        <div class="k">TASK</div><div class="s">done</div>
+        <div class="g">Contrast WriteHERE</div>
+      </div>
+      <div class="n write" style="left:576px;top:314px">
+        <div class="k">WRITE · leaf</div><div class="s">done</div>
+        <div class="g">→ article.md</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
