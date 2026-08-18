@@ -29,6 +29,8 @@
   <a href="#install">Install</a> ·
   <a href="#quick-start">Quick start</a> ·
   <a href="#how-a-tick-works">How a tick works</a> ·
+  <a href="#customize">Customize</a> ·
+  <a href="#extend">Extend</a> ·
   <a href="#what-it-is-not">What it is not</a> ·
   <a href="#requirements">Requirements</a> ·
   <a href="#credits">Credits</a>
@@ -59,14 +61,16 @@ That is why this is an **agent driver** (`AgentLoop.prepare` can choose this con
 
 ## Install
 
-You need the `dsh` CLI and `pnpm` (any working DeepSeek Harness install). Then:
+You need a working [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) (`dsh` on PATH, plus `pnpm`). The official loader is `dsh plugin add` — it runs `pnpm add` inside `$DSH_HOME/profiles/<name>` and, because this package declares `dsh.bundle`, appends a config layer.
+
+### One line (recommended)
 
 ```sh
 dsh plugin --profile web add github:Player-YN/dsh-agent-driver-writehere
 dsh --profile web
 ```
 
-That one `add` clones this repository into the `web` profile, registers the bundle layer, and pulls `zod`. The first time the plugin loads, it copies the **article-editor** preset into `~/.dsh/.agent-presets/` if that directory is empty. New session → preset **article-editor** (技术博客博主).
+That clones this repository into the `web` profile, registers the bundle, and installs `zod`. The first time the plugin loads, it copies **article-editor** into `~/.dsh/.agent-presets/` only if that folder does not already exist. Then: New session → preset **article-editor** (技术博客博主).
 
 Pin a commit so `main` cannot move under you:
 
@@ -74,23 +78,31 @@ Pin a commit so `main` cannot move under you:
 dsh plugin --profile web add github:Player-YN/dsh-agent-driver-writehere#<sha>
 ```
 
-Confirm the layer:
+### Clone, then add
 
 ```sh
-dsh --profile web --dump-config   # look for "# == dsh-agent-driver-writehere"
+git clone https://github.com/Player-YN/dsh-agent-driver-writehere.git
+cd dsh-agent-driver-writehere
+dsh plugin --profile web add .
 ```
 
-This package is not on the npm registry yet. If a profile already composes this driver from another layer, do not add the bundle a second time.
-
-### Local checkout
+Windows, from a checkout (also copies the preset immediately):
 
 ```powershell
 .\install.ps1
 ```
 
+### Confirm, update, remove
+
 ```sh
-dsh plugin --profile web add .
+dsh --profile web --dump-config   # look for "# == dsh-agent-driver-writehere"
+dsh plugin --profile web update github:Player-YN/dsh-agent-driver-writehere
+dsh plugin --profile web remove dsh-agent-driver-writehere
 ```
+
+This package is not on the npm registry yet. If a profile already composes this driver from another layer, do not add the bundle a second time.
+
+`install-remote.sh` / `install-remote.ps1` only wrap the official `add` and then copy the preset. They are optional. Only pipe a script you have read.
 
 ## Quick start
 
@@ -142,6 +154,87 @@ Rules the scheduler enforces:
 - `think` and `task` stay atomic unless that child sets `atomic: false`.
 - Optional `length` is a composition budget for `write` children only.
 - Do not glue prose onto the decision JSON.
+
+## Customize
+
+Three layers, from cheapest to “you are forking the driver.”
+
+| Layer | Where | Rebuild needed? |
+| --- | --- | --- |
+| Editor voice | `~/.dsh/.agent-presets/article-editor/agent.cordis.yml` (`persona` / `config.text`) | No. Restart `dsh web`. |
+| Methodology | `~/.dsh/.agent-presets/article-editor/skills/<name>/SKILL.md` | No. Next planner tick re-reads the tree. |
+| Tick instructions, worker persona, retrieval classifier | [`packages/writehere/src/prompts.ts`](packages/writehere/src/prompts.ts) | Yes: `node scripts/build.mjs`, then reinstall or restart against this checkout. |
+| Bind another preset id to WriteHere | [`packages/writehere/src/index.ts`](packages/writehere/src/index.ts) `bindPreset(...)` | Yes. Only `article-editor` and `xieka` are bound today. |
+| Algorithm / node types / `tools: []` | Scheduler + tree engine | Yes, and stay compatible with Algorithm 1. |
+
+The first-load copy **does not overwrite** an existing `article-editor` roster directory. Edit the copy under `~/.dsh/.agent-presets/`. Delete that directory only if you want the shipped preset back.
+
+### Which prompts you can change
+
+| Prompt | File | Role |
+| --- | --- | --- |
+| Editor persona (what the model believes it is) | Preset `agent.cordis.yml` | Live system-facing voice. This is the usual customization. |
+| Update tick | `UPDATE_INSTRUCTION` | Must stay “JSON `{"goal":"..."}` for this node only.” |
+| Decide tick (write parent) | `DECIDE_WRITE_INSTRUCTION` | Must stay JSON `atomic` / `children`. |
+| Decide tick (think / task) | `DECIDE_ATOM_INSTRUCTION` | Same JSON contract; defaults atomic. |
+| Write / think execute | `EXECUTE_WRITE_INSTRUCTION`, `EXECUTE_THINK_INSTRUCTION` | Prose only. |
+| Parent compose | `COMPOSE_WRITE_INSTRUCTION` | Prose only, after children finish. |
+| Retrieval worker | `RETRIEVAL_PERSONA`, `RETRIEVAL_PROMPT_PREFIX` | Passed into `startContinuable` when `isRetrievalGoal(goal)` is true. |
+| Other task worker | `LAB_PERSONA` | Same dispatch, non-retrieval tasks. |
+| GetInfo wrappers | `GET_INFO_OPEN` / `GET_INFO_CLOSE` | Tags around the snapshot. Changing them without changing `completeText` will leak old snapshots. |
+
+GetInfo **JSON shape** (node, ancestors, deps, draft, planner graph) is produced by [`packages/article-tree/src/getinfo.ts`](packages/article-tree/src/getinfo.ts). Treat that as protocol, not copy.
+
+`DSH_JSON_SCHEMA=1` switches Update/Decide from `{ type: "json_object" }` to `{ type: "json_schema" }`. Leave it unset unless your adapter documents support — DeepSeek chat-completions still 400s `json_schema`.
+
+## Extend
+
+This loop is meant to stay a **small editor** plus **ordinary ReAct workers**. Extra capability belongs on the worker side or in the preset, not as `article_*` functions on the editor.
+
+### Skills (supported today, no driver change)
+
+Methodology skills are **not** function-calling tools. Each `SKILL.md` under the editor preset is concatenated into `<article-methodology>…</article-methodology>` on planner ticks ([`packages/writehere/src/skills.ts`](packages/writehere/src/skills.ts)).
+
+```
+~/.dsh/.agent-presets/article-editor/skills/
+  my-house-style/
+    SKILL.md
+```
+
+Shipped examples: `presets/article-editor/skills/teach-for-transfer/` and `column-runtime-control/`. After the first-load copy they live in the user roster; add siblings there.
+
+Do not put a shell or API skill on the editor preset and expect the model to call it. The editor request is `tools: []`.
+
+Worker skills are whatever the **`standard`** preset already loads (user / workspace / system skill catalogs). A `task` card inherits that world. Install extra DSH skill packs or workspace `SKILL.md` files for workers the usual DSH way.
+
+### Tools (workers yes, editor no)
+
+| Surface | Tools |
+| --- | --- |
+| Editor (`WriteHereAgent`) | None. Do not add `article_decompose` / `article_write` / `bash` here. |
+| `task` worker (`preset: 'standard'`) | Whatever `standard` has: shell, search, your other `dsh plugin add` tools. |
+
+To give the column a new capability (fetch a site, call an API, typeset):
+
+1. Install or author that tool as a normal DSH plugin on the **web / standard** side.
+2. Teach the editor, in persona or a methodology `SKILL.md`, when to emit a `task` card whose goal is a brief for that worker.
+3. The scheduler already calls `startContinuable({ preset: 'standard', persona })`. You do not register a new editor function.
+
+`isRetrievalGoal` in `prompts.ts` only picks **retrieval vs lab persona**. It does not choose tools. A publish-shaped goal is classified as lab, not retrieval.
+
+### Another preset or another driver
+
+- **Same WriteHERE loop, different column.** Copy `article-editor` to a new id under `~/.dsh/.agent-presets/<id>/`, change persona and skills, then add `ctx.agentDrivers.bindPreset('<id>', 'writehere')` in `apply()` (or a tiny companion host plugin that calls `bindPreset`). Without that bind, the session stays `ReactLoopAgent`.
+- **Different constructor.** `ctx.agentDrivers.register(id, Ctor)` is the public registry. A second live bind of `article-editor` throws. Unloading this bundle removes the writehere bind.
+- **Do not** implement “extensions” by giving the editor a tool belt. That collapses the loop back into stock ReAct.
+
+### What stays frozen unless you fork the algorithm
+
+- Tick order: GetInfo → Update → Decide → typed execute
+- Node types: `write` / `think` / `task` (paper *search*)
+- `needs-update` after dependencies finish
+- Leaf `write` appends `article.md`; parent compose does not invent a second manuscript
+- Host owns the step; the model does not pick the next node via function calling
 
 ## What it does
 

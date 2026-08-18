@@ -29,6 +29,8 @@
   <a href="#安装">安装</a> ·
   <a href="#快速上手">快速上手</a> ·
   <a href="#一拍在做什么">一拍在做什么</a> ·
+  <a href="#自定义">自定义</a> ·
+  <a href="#扩展">扩展</a> ·
   <a href="#不适合做什么">不适合做什么</a> ·
   <a href="#环境要求">环境要求</a> ·
   <a href="#致谢与引用">致谢</a>
@@ -59,14 +61,16 @@
 
 ## 安装
 
-需要本机已有 `dsh` 和 `pnpm`（能跑 DeepSeek Harness 即可）。然后：
+需要本机已有能跑的 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)（`dsh` 在 PATH 上，以及 `pnpm`）。官方加载器就是 `dsh plugin add`：它在 `$DSH_HOME/profiles/<名字>` 里执行 `pnpm add`，因为本包声明了 `dsh.bundle`，所以会多叠一层配置。
+
+### 一行（推荐）
 
 ```sh
 dsh plugin --profile web add github:Player-YN/dsh-agent-driver-writehere
 dsh --profile web
 ```
 
-这一条 `add` 会把本仓库装进 `web` profile、登记 bundle 层，并拉下 `zod`。插件第一次加载时，若 `~/.dsh/.agent-presets/article-editor` 还不存在，会把出厂 preset 拷过去。新会话选 **article-editor**（技术博客博主）。
+这一条会把本仓库装进 `web` profile、登记 bundle，并拉下 `zod`。插件第一次加载时，只有 `~/.dsh/.agent-presets/article-editor` **还不存在** 才会拷出厂 preset。然后：新会话 → 选 **article-editor**（技术博客博主）。
 
 钉死某个 commit，避免 `main` 一推安装物就变：
 
@@ -74,23 +78,31 @@ dsh --profile web
 dsh plugin --profile web add github:Player-YN/dsh-agent-driver-writehere#<sha>
 ```
 
-确认配置层已叠上：
+### 先克隆再装
 
 ```sh
-dsh --profile web --dump-config   # 应出现 "# == dsh-agent-driver-writehere"
+git clone https://github.com/Player-YN/dsh-agent-driver-writehere.git
+cd dsh-agent-driver-writehere
+dsh plugin --profile web add .
 ```
 
-尚未发布到 npm。若某个 profile 已经从其他层装过本驱动，不要再加一次 bundle。
-
-### 本地目录
+Windows 在检出目录里也可以（会立刻拷一份 preset）：
 
 ```powershell
 .\install.ps1
 ```
 
+### 确认、更新、卸载
+
 ```sh
-dsh plugin --profile web add .
+dsh --profile web --dump-config   # 应出现 "# == dsh-agent-driver-writehere"
+dsh plugin --profile web update github:Player-YN/dsh-agent-driver-writehere
+dsh plugin --profile web remove dsh-agent-driver-writehere
 ```
+
+尚未发布到 npm。若某个 profile 已经从其他层装过本驱动，不要再加一次 bundle。
+
+`install-remote.sh` / `install-remote.ps1` 只包装官方的 `add`，再拷 preset。不是第二套加载器。只对你读过的脚本做管道执行。
 
 ## 快速上手
 
@@ -142,6 +154,87 @@ dsh --profile headless --preset article-editor "为什么必须写回"
 - `think` 与 `task` 默认原子；再拆必须在该孩子上写 `atomic: false`。
 - 可选的 `length` 只给 `write` 孩子当篇幅预算。
 - 不要在决定 JSON 后面粘正文。
+
+## 自定义
+
+三层，从最便宜到「你在改驱动」。
+
+| 层 | 改哪里 | 要不要重新构建 |
+| --- | --- | --- |
+| 主编人设 | `~/.dsh/.agent-presets/article-editor/agent.cordis.yml`（`persona` / `config.text`） | 不用。重启 `dsh web`。 |
+| 方法论 | `~/.dsh/.agent-presets/article-editor/skills/<名字>/SKILL.md` | 不用。下一拍规划会重读目录。 |
+| 每一拍的指令、工人人设、检索分类 | [`packages/writehere/src/prompts.ts`](packages/writehere/src/prompts.ts) | 要：`node scripts/build.mjs`，再装一次或对着这份检出重启。 |
+| 把另一个 preset id 绑到 WriteHere | [`packages/writehere/src/index.ts`](packages/writehere/src/index.ts) 里的 `bindPreset(...)` | 要。目前只绑了 `article-editor` 和 `xieka`。 |
+| 算法 / 节点类型 / `tools: []` | 调度器 + 树引擎 | 要，并尽量保持 Algorithm 1 兼容。 |
+
+第一次加载 **不会覆盖** 已经存在的 `article-editor` 目录。请改 `~/.dsh/.agent-presets/` 里那份。只有想恢复出厂 preset 时才删那个目录。
+
+### 哪些 prompt 能改
+
+| Prompt | 文件 | 作用 |
+| --- | --- | --- |
+| 主编人设（模型以为自己是谁） | preset 的 `agent.cordis.yml` | 真正活着的人设。日常改这里。 |
+| Update 拍 | `UPDATE_INSTRUCTION` | 必须仍是「只回 JSON `{"goal":"..."}`，只改本节点」。 |
+| 决定拍（write 父节点） | `DECIDE_WRITE_INSTRUCTION` | 必须仍是 JSON `atomic` / `children`。 |
+| 决定拍（think / task） | `DECIDE_ATOM_INSTRUCTION` | 同一套 JSON；默认原子。 |
+| write / think 执行 | `EXECUTE_WRITE_INSTRUCTION`、`EXECUTE_THINK_INSTRUCTION` | 只收散文。 |
+| 父节点合成 | `COMPOSE_WRITE_INSTRUCTION` | 子卡齐了之后只收散文。 |
+| 检索工人 | `RETRIEVAL_PERSONA`、`RETRIEVAL_PROMPT_PREFIX` | `isRetrievalGoal(goal)` 为真时传给 `startContinuable`。 |
+| 其他 task 工人 | `LAB_PERSONA` | 同一套派工，非检索任务。 |
+| GetInfo 外壳 | `GET_INFO_OPEN` / `GET_INFO_CLOSE` | 快照两侧的标签。只改标签、不改 `completeText`，旧快照会漏到表面上。 |
+
+GetInfo 的 **JSON 形状**（节点、祖先、依赖、本稿、规划拍的结构图）由 [`packages/article-tree/src/getinfo.ts`](packages/article-tree/src/getinfo.ts) 生成。把它当协议，不要当文案改。
+
+`DSH_JSON_SCHEMA=1` 会把 Update / 决定从 `{ type: "json_object" }` 换成 `{ type: "json_schema" }`。适配器没写明支持就不要开——DeepSeek 的 chat-completions 对 `json_schema` 仍会 400。
+
+## 扩展
+
+这套循环的设计是 **小主编 + 普通 ReAct 工人**。多出来的能力放在工人或 preset 上，不要做成主编身上的 `article_*` 函数。
+
+### Skills（现在就能加，不用改驱动）
+
+方法论 skill **不是** function calling 工具。编辑 preset 下每个 `SKILL.md` 会在规划拍拼进 `<article-methodology>…</article-methodology>`（[`packages/writehere/src/skills.ts`](packages/writehere/src/skills.ts)）。
+
+```
+~/.dsh/.agent-presets/article-editor/skills/
+  my-house-style/
+    SKILL.md
+```
+
+出厂例子：`presets/article-editor/skills/teach-for-transfer/` 与 `column-runtime-control/`。第一次拷贝之后它们在用户 roster 里；新 skill 加在旁边即可。
+
+不要指望在主编 preset 上放一个会开终端、调 API 的 skill，模型就会去调。主编请求里是 `tools: []`。
+
+工人 skill 就是 **`standard`** preset 已经会加载的那些（用户 / 工作区 / 系统 skill 目录）。`task` 卡继承那个世界。给工人加能力：按 DSH 常规给 `standard` 装 skill 包，或在工作区放 `SKILL.md`。
+
+### 工具（工人可以，主编不行）
+
+| 面 | 工具 |
+| --- | --- |
+| 主编（`WriteHereAgent`） | 没有。不要在这里加 `article_decompose` / `article_write` / `bash`。 |
+| `task` 工人（`preset: 'standard'`） | `standard` 有什么就是什么：终端、搜索、你用 `dsh plugin add` 装的其他工具。 |
+
+要给专栏加一种新能力（抓网页、调 API、排版）：
+
+1. 把那个工具做成普通 DSH 插件，装在 **web / standard** 一侧。
+2. 在人设或方法论 `SKILL.md` 里写清：何时拆一张 `task`，goal 写成给工人的调度单。
+3. 调度器已经会 `startContinuable({ preset: 'standard', persona })`。不用给主编再注册函数。
+
+`prompts.ts` 里的 `isRetrievalGoal` 只决定 **检索人设还是实验人设**，不选工具。长得像发稿的 goal 会走实验人设，不走检索。
+
+### 换 preset，或换驱动
+
+- **同一套 WriteHERE 循环，另一栏。** 把 `article-editor` 拷到 `~/.dsh/.agent-presets/<id>/`，改人设和 skills，再在 `apply()` 里加一行 `ctx.agentDrivers.bindPreset('<id>', 'writehere')`（或写一个只做 `bindPreset` 的小宿主插件）。不绑的话，会话仍是 `ReactLoopAgent`。
+- **另一种构造器。** `ctx.agentDrivers.register(id, Ctor)` 是公开注册表。对 `article-editor` 再绑一次会抛错。卸掉本 bundle，writehere 的绑定一起卸掉。
+- **不要**靠给主编挂工具带来做「扩展」。那会把循环摊回默认 ReAct。
+
+### 除非你改算法，否则不要动这些
+
+- 拍序：GetInfo → Update → 决定 → 按类型执行
+- 节点类型：`write` / `think` / `task`（论文里的 *search*）
+- 依赖齐了进入 `needs-update`
+- 叶子 `write` 追加 `article.md`；父节点合成不会另写一篇稿
+- 步子由宿主走；模型不能靠 function calling 自己点下一张卡
 
 ## 能做什么
 
