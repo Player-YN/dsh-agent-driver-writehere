@@ -1,0 +1,23 @@
+dsh-agent-driver-writehere
+==========================
+
+This package ports the WriteHERE writing loop onto DeepSeek Harness as an
+agent driver. It is not a file-for-file copy of the original Python runtime.
+
+WriteHERE algorithm and type design
+-----------------------------------
+
+Xiong, Ruibin et al. (2025). Beyond Outlining: Heterogeneous Recursive
+Planning for Adaptive Long-form Writing with Language Models.
+https://arxiv.org/abs/2503.08275
+
+Reference implementation:
+https://github.com/principia-ai/WriteHERE
+
+If you use this port in research, cite the paper above.
+
+DeepSeek Harness
+----------------
+
+Plugin shape, Cordis composition, and the host Agent contract follow
+DeepSeek Harness (MIT). See https://github.com/deepseek-ai/deepseek-harness

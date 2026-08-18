@@ -1,0 +1,18 @@
+.panel {
+  border-top: 1px solid var(--border-subtle, #2a3140);
+  padding: 8px 10px 10px;
+  min-height: 180px;
+  max-height: 42%;
+  overflow: auto;
+}
+.title {
+  margin: 0 0 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary, #8b93a2);
+}
+.empty {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-secondary, #8b93a2);
+}

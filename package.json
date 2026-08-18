@@ -1,0 +1,45 @@
+{
+  "name": "dsh-agent-driver-writehere",
+  "version": "0.1.0",
+  "description": "Hierarchical long-form writing for DeepSeek Harness — WriteHERE as an agent driver, not extra ReAct tools.",
+  "license": "MIT",
+  "type": "module",
+  "private": false,
+  "keywords": [
+    "dsh-plugin",
+    "deepseek-harness",
+    "writehere",
+    "agent-driver",
+    "long-form-writing"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Player-YN/dsh-agent-driver-writehere.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Player-YN/dsh-agent-driver-writehere/issues"
+  },
+  "homepage": "https://github.com/Player-YN/dsh-agent-driver-writehere#readme",
+  "files": [
+    "packages",
+    "presets",
+    "patches",
+    "cordis.patch.yml",
+    "NOTICE",
+    "LICENSE",
+    "CITATION.cff"
+  ],
+  "dsh": {
+    "plugin": true,
+    "kind": "server",
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "dependencies": {
+    "@deepseek-ai/dsh-agent-drivers": "file:./packages/agent-drivers",
+    "@deepseek-ai/dsh-article-tree": "file:./packages/article-tree",
+    "@deepseek-ai/dsh-writehere": "file:./packages/writehere",
+    "@deepseek-ai/dsh-client-ui-article-tree": "file:./packages/ui-article-tree"
+  }
+}

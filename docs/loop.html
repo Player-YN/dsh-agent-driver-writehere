@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>WriteHERE tick</title>
+  <style>
+    html, body {
+      margin: 0;
+      width: 1200px;
+      height: 340px;
+      overflow: hidden;
+      background: #0b1220;
+      color: #f4efe4;
+      font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", ui-sans-serif, sans-serif;
+    }
+    .stage {
+      width: 1200px;
+      height: 340px;
+      box-sizing: border-box;
+      padding: 36px 40px 28px;
+      background:
+        radial-gradient(700px 220px at 50% 0%, rgba(96,165,250,.10), transparent 70%),
+        #0b1220;
+    }
+    .kicker {
+      letter-spacing: .18em;
+      font-size: 12px;
+      font-weight: 650;
+      color: #9aa6bc;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+    .row {
+      display: flex;
+      align-items: stretch;
+      gap: 14px;
+    }
+    .box {
+      flex: 1;
+      border: 1px solid rgba(244,239,228,.14);
+      background: #121a2b;
+      border-radius: 14px;
+      padding: 16px 16px 14px;
+      min-height: 168px;
+    }
+    .n {
+      font-size: 11px;
+      font-weight: 700;
+      color: #fbbf24;
+      letter-spacing: .08em;
+    }
+    h2 {
+      margin: 8px 0 8px;
+      font-size: 22px;
+      font-weight: 650;
+      letter-spacing: -.02em;
+    }
+    p {
+      margin: 0;
+      color: #b7c0d0;
+      font-size: 13.5px;
+      line-height: 1.45;
+    }
+    code {
+      font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+      font-size: 12px;
+      color: #e5e7eb;
+    }
+    .arrow {
+      width: 18px;
+      align-self: center;
+      color: #64748b;
+      font-size: 22px;
+      text-align: center;
+      flex: 0 0 18px;
+    }
+    .note {
+      margin-top: 16px;
+      color: #7d8798;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <div class="kicker">Algorithm 1 · one scheduler tick</div>
+    <div class="row">
+      <div class="box">
+        <div class="n">01</div>
+        <h2>GetInfo</h2>
+        <p>Fresh snapshot: this node, ancestors, deps, current draft. Planner ticks also include the graph.</p>
+      </div>
+      <div class="arrow">→</div>
+      <div class="box">
+        <div class="n">02</div>
+        <h2>Update</h2>
+        <p>Model returns only <code>{"goal":"..."}</code> for the selected node. No children. No parent rewrite.</p>
+      </div>
+      <div class="arrow">→</div>
+      <div class="box">
+        <div class="n">03</div>
+        <h2>Decide</h2>
+        <p><code>atomic:true</code> execute now, or split into typed children: write / think / task.</p>
+      </div>
+      <div class="arrow">→</div>
+      <div class="box">
+        <div class="n">04</div>
+        <h2>Execute</h2>
+        <p>write = reader prose. think = memo. task starts a continuable <code>standard</code> worker.</p>
+      </div>
+    </div>
+    <div class="note">After children finish, the parent becomes needs-update and must be Updated again before it executes.</div>
+  </div>
+</body>
+</html>

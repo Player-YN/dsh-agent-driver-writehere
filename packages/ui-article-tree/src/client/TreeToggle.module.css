@@ -1,0 +1,19 @@
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 32px;
+  margin: 0 0 6px;
+  border: 1px solid var(--border-subtle, #3a4254);
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+.btn[aria-pressed='true'] {
+  border-color: #3b82f6;
+  background: #15233a;
+}

@@ -1,0 +1,13 @@
+# Host-plane WriteHERE driver layer.
+# agent-drivers must exist before writehere registers the constructor.
+# ui-article-tree is a no-op on headless (no web client).
+- insert:
+    - id: agent-drivers
+      name: '@deepseek-ai/dsh-agent-drivers'
+
+    - id: writehere
+      name: '@deepseek-ai/dsh-writehere'
+      inject: [agentDrivers]
+
+    - id: ui-article-tree
+      name: '@deepseek-ai/dsh-client-ui-article-tree'

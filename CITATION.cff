@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+title: dsh-agent-driver-writehere
+message: If you use this software, please cite the WriteHERE paper.
+type: software
+license: MIT
+repository-code: https://github.com/Player-YN/dsh-agent-driver-writehere
+references:
+  - type: article
+    title: "Beyond Outlining: Heterogeneous Recursive Planning for Adaptive Long-form Writing with Language Models"
+    authors:
+      - family-names: Xiong
+        given-names: Ruibin
+    year: 2025
+    doi: 10.48550/arXiv.2503.08275
+    url: https://arxiv.org/abs/2503.08275
+    identifiers:
+      - type: other
+        value: "arXiv:2503.08275"

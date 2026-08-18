@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>dsh-agent-driver-writehere banner</title>
+  <style>
+    :root {
+      --ink: #0b1220;
+      --ink-2: #121a2b;
+      --paper: #f4efe4;
+      --mute: #9aa6bc;
+      --line: rgba(244, 239, 228, 0.12);
+      --write: #60a5fa;
+      --think: #c4b5fd;
+      --task: #34d399;
+      --amber: #fbbf24;
+    }
+    html, body {
+      margin: 0;
+      width: 1280px;
+      height: 640px;
+      overflow: hidden;
+      background: var(--ink);
+      color: var(--paper);
+      font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", ui-sans-serif, sans-serif;
+    }
+    .stage {
+      position: relative;
+      width: 1280px;
+      height: 640px;
+      background:
+        radial-gradient(900px 420px at 18% 10%, rgba(96, 165, 250, 0.14), transparent 60%),
+        radial-gradient(700px 380px at 88% 80%, rgba(52, 211, 153, 0.10), transparent 55%),
+        linear-gradient(180deg, #0d1526 0%, #0b1220 55%, #0a101c 100%);
+    }
+    .grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--line) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(circle at 30% 40%, #000 20%, transparent 78%);
+      opacity: 0.55;
+    }
+    .rule {
+      position: absolute;
+      left: 72px;
+      top: 0;
+      width: 1px;
+      height: 100%;
+      background: linear-gradient(180deg, transparent, rgba(244,239,228,.18), transparent);
+    }
+    .copy {
+      position: absolute;
+      left: 80px;
+      top: 108px;
+      width: 540px;
+    }
+    .eyebrow {
+      letter-spacing: 0.22em;
+      font-size: 13px;
+      font-weight: 650;
+      color: var(--mute);
+      text-transform: uppercase;
+    }
+    h1 {
+      margin: 18px 0 0;
+      font-family: Georgia, "Iowan Old Style", "Times New Roman", "Songti SC", serif;
+      font-size: 54px;
+      font-weight: 500;
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+    }
+    .sub {
+      margin: 18px 0 0;
+      font-size: 21px;
+      line-height: 1.35;
+      color: #d7deea;
+      max-width: 520px;
+    }
+    .zh {
+      margin-top: 8px;
+      font-size: 16px;
+      color: var(--mute);
+    }
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 28px;
+    }
+    .chip {
+      border: 1px solid rgba(244,239,228,.16);
+      background: rgba(18, 26, 43, 0.72);
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 13px;
+      color: #d5dcea;
+    }
+    .chip b { color: var(--amber); font-weight: 650; }
+    .cards {
+      position: absolute;
+      right: 36px;
+      top: 86px;
+      width: 500px;
+      height: 470px;
+    }
+    .node {
+      position: absolute;
+      width: 168px;
+      height: 68px;
+      border-radius: 8px;
+      box-sizing: border-box;
+      padding: 8px 10px;
+      border: 1.5px solid;
+      box-shadow: 0 10px 28px rgba(0,0,0,.28);
+    }
+    .node .k { font-size: 10px; font-weight: 700; letter-spacing: .04em; }
+    .node .s { float: right; font-size: 10px; color: #94a3b8; }
+    .node .g { clear: both; padding-top: 10px; font-size: 13px; color: #e5e7eb; }
+    .write { background: #0f2744; border-color: #3b82f6; }
+    .write .k { color: #93c5fd; }
+    .think { background: #221a3a; border-color: #a78bfa; }
+    .think .k { color: #ddd6fe; }
+    .task { background: #0f2a22; border-color: #34d399; }
+    .task .k { color: #6ee7b7; }
+    .need { border-color: #f59e0b; border-style: dashed; }
+    .need .s { color: #fbbf24; }
+    .edge {
+      position: absolute;
+      height: 2px;
+      background: #64748b;
+    }
+    .edge.v { width: 2px; }
+    .foot {
+      position: absolute;
+      left: 88px;
+      bottom: 36px;
+      font-size: 13px;
+      color: #7d8798;
+      letter-spacing: .02em;
+    }
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <div class="grid"></div>
+    <div class="rule"></div>
+    <div class="copy">
+      <div class="eyebrow">DeepSeek Harness · Agent Driver</div>
+      <h1>dsh-agent-driver-<br>writehere</h1>
+      <p class="sub">WriteHERE as a second inference cycle — not extra ReAct tools.</p>
+      <p class="zh">异构递归规划 · 规划 / 检索 / 推理 / 成稿 各是一张卡</p>
+      <div class="chips">
+        <span class="chip"><b>tools: []</b></span>
+        <span class="chip">GetInfo → Update → Decide</span>
+        <span class="chip">task → standard worker</span>
+        <span class="chip">Card tree</span>
+      </div>
+    </div>
+    <div class="cards" aria-hidden="true">
+      <div class="edge" style="left:176px;top:86px;width:54px"></div>
+      <div class="edge" style="left:176px;top:190px;width:54px"></div>
+      <div class="edge" style="left:176px;top:294px;width:54px"></div>
+      <div class="edge" style="left:176px;top:398px;width:54px"></div>
+      <div class="edge v" style="left:174px;top:86px;height:314px"></div>
+      <div class="node write" style="left:8px;top:208px">
+        <div class="k">WRITE · root</div><div class="s">done</div>
+        <div class="g">What is ReAct?</div>
+      </div>
+      <div class="node task" style="left:230px;top:52px">
+        <div class="k">TASK · retrieve</div><div class="s">done</div>
+        <div class="g">Original paper facts</div>
+      </div>
+      <div class="node think" style="left:230px;top:156px">
+        <div class="k">THINK · memo</div><div class="s">done</div>
+        <div class="g">Why the loop matters</div>
+      </div>
+      <div class="node write" style="left:230px;top:260px">
+        <div class="k">WRITE · body</div><div class="s">done</div>
+        <div class="g">The three-step cycle</div>
+      </div>
+      <div class="node write need" style="left:230px;top:364px">
+        <div class="k">WRITE · close</div><div class="s">needs-update</div>
+        <div class="g">When it is not enough</div>
+      </div>
+    </div>
+    <div class="foot">arxiv.org/abs/2503.08275 · MIT · dsh-plugin</div>
+  </div>
+</body>
+</html>
