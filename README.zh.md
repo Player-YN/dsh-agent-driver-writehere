@@ -263,7 +263,7 @@ cordis.patch.yml           `dsh plugin add` 叠上去的那一层
 
 ## 发现
 
-DeepSeek Harness 用 GitHub topic [`dsh-plugin`](https://github.com/topics/dsh-plugin) 收录社区插件。仓库公开后，请在 GitHub 仓库页加上这些 topic：
+DeepSeek Harness 用 GitHub topic [`dsh-plugin`](https://github.com/topics/dsh-plugin) 收录社区插件。本仓库已打上：
 
 `dsh-plugin` · `dsh` · `deepseek-harness` · `writehere` · `agent-driver` · `long-form-writing` · `cordis`
 

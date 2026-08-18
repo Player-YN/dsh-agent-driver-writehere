@@ -263,7 +263,7 @@ Attribution notes: [NOTICE](NOTICE). Machine-readable citation: [CITATION.cff](C
 
 ## Discoverability
 
-DeepSeek Harness lists community plugins under the [`dsh-plugin`](https://github.com/topics/dsh-plugin) topic. After the repository is public, set these topics on the GitHub repo page:
+DeepSeek Harness lists community plugins under the [`dsh-plugin`](https://github.com/topics/dsh-plugin) topic. This repository is tagged:
 
 `dsh-plugin` · `dsh` · `deepseek-harness` · `writehere` · `agent-driver` · `long-form-writing` · `cordis`
 
