@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/banner.png" alt="dsh-agent-driver-writehere — 把 WriteHERE 做成 DeepSeek Harness 的 Agent Driver" width="100%">
+  <img src="docs/banner-zh.png" alt="dsh-agent-driver-writehere — 把 WriteHERE 做成 DeepSeek Harness 的 Agent Driver" width="100%">
 </p>
 
 <h1 align="center">dsh-agent-driver-writehere</h1>

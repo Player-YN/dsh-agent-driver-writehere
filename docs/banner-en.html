@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>banner en</title>
+  <style>
+    html, body { margin: 0; width: 1280px; height: 640px; overflow: hidden; background: #070b14; }
+    .stage {
+      width: 1280px; height: 640px; position: relative;
+      background:
+        radial-gradient(560px 320px at 82% 48%, rgba(59,130,246,.11), transparent 68%),
+        #070b14;
+    }
+    .copy {
+      position: absolute; left: 56px; top: 52px; bottom: 52px; width: 430px;
+      display: flex; flex-direction: column; justify-content: space-between;
+    }
+    .eyebrow {
+      letter-spacing: .28em; font-size: 13px; color: #8b95a8;
+      font-family: "Segoe UI", sans-serif; text-transform: uppercase; font-weight: 600;
+    }
+    h1 {
+      margin: 18px 0 0;
+      font-family: Gabriola, "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+      font-size: 92px; font-weight: 400; letter-spacing: -.02em;
+      color: #f7f1e4; line-height: .86;
+    }
+    .lead {
+      margin: 22px 0 0;
+      font-family: "Palatino Linotype", Palatino, Georgia, serif;
+      font-style: italic; font-size: 26px; line-height: 1.28; color: #d7deea;
+    }
+    .sub {
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      font-size: 15px; line-height: 1.45; color: #8b95a8;
+    }
+    .tree { position: absolute; left: 508px; top: 28px; width: 748px; height: 584px; }
+    .n {
+      position: absolute; width: 172px; height: 68px; box-sizing: border-box;
+      border-radius: 9px; padding: 8px 10px; border: 1.5px solid;
+      font-family: "Segoe UI", sans-serif;
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
+      text-align: center;
+    }
+    .n.leaf { width: 184px; height: 74px; }
+    .row { width: 100%; display: flex; justify-content: space-between; align-items: center; }
+    .k { font-size: 10px; font-weight: 700; letter-spacing: .04em; }
+    .s { font-size: 10px; color: #94a3b8; }
+    .g { width: 100%; margin-top: 6px; font-size: 13px; color: #eef2f7; line-height: 1.2; }
+    .write { background: #0f2744; border-color: #3b82f6; }
+    .write .k { color: #93c5fd; }
+    .think { background: #221a3a; border-color: #a78bfa; }
+    .think .k { color: #ddd6fe; }
+    .task { background: #0f2a22; border-color: #34d399; }
+    .task .k { color: #6ee7b7; }
+    .need { border-color: #f59e0b; border-style: dashed; }
+    .need .s { color: #fbbf24; }
+    svg.wires { position: absolute; inset: 0; width: 748px; height: 584px; pointer-events: none; }
+    .wire { fill: none; stroke: #475569; stroke-width: 1.5; }
+    .dep { fill: none; stroke: #f59e0b; stroke-width: 1.3; stroke-dasharray: 5 3; }
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <div class="copy">
+      <div>
+        <div class="eyebrow">DeepSeek Harness · Agent Driver</div>
+        <h1>write<br>here</h1>
+        <p class="lead">A second inference cycle — not extra ReAct tools.</p>
+      </div>
+      <p class="sub">Host scheduler · tools: [] · write / think / task</p>
+    </div>
+    <div class="tree">
+      <svg class="wires" viewBox="0 0 748 584">
+        <path class="wire" d="M86,292 C140,292 140,58 188,58"/>
+        <path class="wire" d="M86,292 C140,292 140,154 188,154"/>
+        <path class="wire" d="M86,292 C140,292 140,292 188,292"/>
+        <path class="wire" d="M86,292 C140,292 140,430 188,430"/>
+        <path class="wire" d="M360,292 C370,292 370,210 376,210"/>
+        <path class="wire" d="M360,292 H376"/>
+        <path class="wire" d="M360,292 C370,292 370,374 376,374"/>
+        <path class="wire" d="M548,374 H564"/>
+        <path class="dep" d="M360,430 C370,430 370,516 376,516"/>
+      </svg>
+      <div class="n write" style="left:0;top:258px">
+        <div class="row"><span class="k">WRITE · root</span><span class="s">done</span></div>
+        <div class="g">What is ReAct?</div>
+      </div>
+      <div class="n task" style="left:188px;top:24px">
+        <div class="row"><span class="k">TASK · retrieve</span><span class="s">done</span></div>
+        <div class="g">Original paper</div>
+      </div>
+      <div class="n think" style="left:188px;top:120px">
+        <div class="row"><span class="k">THINK · memo</span><span class="s">done</span></div>
+        <div class="g">Why the loop</div>
+      </div>
+      <div class="n write" style="left:188px;top:258px">
+        <div class="row"><span class="k">WRITE · body</span><span class="s">done</span></div>
+        <div class="g">Three-step cycle</div>
+      </div>
+      <div class="n write need" style="left:188px;top:396px">
+        <div class="row"><span class="k">WRITE · close</span><span class="s">needs-update</span></div>
+        <div class="g">When it fails</div>
+      </div>
+      <div class="n think" style="left:376px;top:176px">
+        <div class="row"><span class="k">THINK</span><span class="s">done</span></div>
+        <div class="g">What “thought” is</div>
+      </div>
+      <div class="n write" style="left:376px;top:258px">
+        <div class="row"><span class="k">WRITE</span><span class="s">done</span></div>
+        <div class="g">Action</div>
+      </div>
+      <div class="n write leaf" style="left:376px;top:337px">
+        <div class="row"><span class="k">WRITE · leaf</span><span class="s">done</span></div>
+        <div class="g">Observation</div>
+      </div>
+      <div class="n task leaf" style="left:376px;top:482px">
+        <div class="row"><span class="k">TASK</span><span class="s">done</span></div>
+        <div class="g">Contrast WriteHERE</div>
+      </div>
+      <div class="n write leaf" style="left:564px;top:337px">
+        <div class="row"><span class="k">WRITE · leaf</span><span class="s">done</span></div>
+        <div class="g">→ article.md</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

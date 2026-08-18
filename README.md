@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/banner.png" alt="dsh-agent-driver-writehere — WriteHERE as a DeepSeek Harness agent driver" width="100%">
+  <img src="docs/banner-en.png" alt="dsh-agent-driver-writehere — WriteHERE as a DeepSeek Harness agent driver" width="100%">
 </p>
 
 <h1 align="center">dsh-agent-driver-writehere</h1>
