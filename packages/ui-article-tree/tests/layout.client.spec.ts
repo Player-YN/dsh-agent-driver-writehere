@@ -1,10 +1,12 @@
 import { describe, expect, it } from 'vitest'
 import {
   childLinkPath,
+  childLinkPathDown,
   clipViewText,
   dependsLinkPath,
   formatWaitsOn,
   layoutHorizontalTree,
+  layoutVerticalTree,
   nodeDependsOn,
   viewEdges,
   type ViewNode,
@@ -32,6 +34,32 @@ function siblings(over: Partial<Record<'a' | 'b' | 'c', Partial<ViewNode>>> = {}
     },
   }
 }
+
+describe('canvas article tree layout', () => {
+  it('places children below the root and fans siblings on X', () => {
+    const layout = layoutVerticalTree(siblings())
+    expect(layout.positions.a!.y).toBeGreaterThan(layout.positions.root!.y)
+    expect(layout.positions.b!.y).toBe(layout.positions.a!.y)
+    expect(layout.positions.a!.x).not.toBe(layout.positions.b!.x)
+    expect(layout.positions.a!.x).not.toBe(layout.positions.c!.x)
+  })
+
+  it('does not shift a blocked sibling when it waits on another sibling', () => {
+    const tree = siblings({
+      b: { status: 'blocked', dependsOn: ['a'] },
+      c: { status: 'blocked', dependsOn: ['a', 'b'] },
+    })
+    const layout = layoutVerticalTree(tree)
+    expect(layout.positions.a!.y).toBe(layout.positions.b!.y)
+    expect(layout.positions.b!.y).toBe(layout.positions.c!.y)
+  })
+
+  it('draws a downward parent-child curve that stretches with the cards', () => {
+    const path = childLinkPathDown({ x: 100, y: 40 }, { x: 220, y: 200 }, 88)
+    expect(path.startsWith('M 100 84')).toBe(true)
+    expect(path).toContain('220 156')
+  })
+})
 
 describe('sidebar article tree layout', () => {
   it('places children to the right of the root', () => {

@@ -1,6 +1,6 @@
 {
   "name": "@deepseek-ai/dsh-client-ui-article-tree",
-  "description": "Sidebar visualization of the WriteHERE article tree",
+  "description": "WriteHERE article-tree window for the Web UI",
   "version": "0.1.0-rc.5",
   "private": true,
   "type": "module",
@@ -46,7 +46,8 @@
     "@deepseek-ai/dsh-client-runtime": "*",
     "@deepseek-ai/dsh-client-ui-sidebar": "*",
     "@deepseek-ai/dsh-client-ui-slots": "*",
-    "react": "^18.2.0"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "peerDependencies": {
     "@deepseek-ai/cordis": "*",

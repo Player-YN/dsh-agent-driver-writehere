@@ -1,7 +1,6 @@
 import type { ClientContext } from '@deepseek-ai/dsh-client-runtime/client'
 import type {} from '@deepseek-ai/dsh-client-locale/client'
 import type {} from '@deepseek-ai/dsh-client-ui-sidebar/client'
-import { ArticleTreePanel } from './ArticleTreePanel.tsx'
 import { TreeToggle } from './TreeToggle.tsx'
 import { en, zh, type ArticleTreeKey } from './locales.ts'
 
@@ -27,10 +26,4 @@ export function apply(ctx: ClientContext): void {
     locale: NS,
     inject: () => ({ ctx }),
   }, TreeToggle))
-
-  ctx.slots.inject('sidebar.articleTree', () => ctx.slots.register({
-    name: 'sidebar.articleTree',
-    locale: NS,
-    inject: () => ({ ctx }),
-  }, ArticleTreePanel))
 }

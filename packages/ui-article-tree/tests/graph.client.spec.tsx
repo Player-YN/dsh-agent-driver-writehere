@@ -1,10 +1,15 @@
 // @vitest-environment jsdom
-import { cleanup, render } from '@testing-library/react'
+import { cleanup, fireEvent, render } from '@testing-library/react'
 import { afterEach, describe, expect, it } from 'vitest'
 import { ArticleTreeGraph } from '../src/client/ArticleTreeGraph.tsx'
+import { zh } from '../src/client/locales.ts'
+import { resetArticleTreeCanvas } from '../src/client/store.ts'
 import type { ViewNode, ViewTree } from '../src/client/layout.ts'
 
-afterEach(cleanup)
+afterEach(() => {
+  resetArticleTreeCanvas()
+  cleanup()
+})
 
 function node(over: Partial<ViewNode> & Pick<ViewNode, 'id' | 'type'>): ViewNode {
   return {
@@ -35,28 +40,28 @@ function dagTree(): ViewTree {
   }
 }
 
+const t = (key: keyof typeof zh) => zh[key]
+
 describe('article tree graph DAG', () => {
-  it('shows waits-on labels and keeps parallel-ready siblings in one column', () => {
+  it('fans siblings, draws only parent-child edges, and shows wait chips', () => {
     const tree = dagTree()
     tree.nodes.a!.dependsOn = ['orphan']
-    const { container } = render(<ArticleTreeGraph tree={tree} />)
+    const { container } = render(<ArticleTreeGraph tree={tree} sessionId="s1" t={t} />)
     const a = container.querySelector('[data-node-id="a"]')
     const b = container.querySelector('[data-node-id="b"]')
     const c = container.querySelector('[data-node-id="c"]')
     expect(a).not.toBeNull()
     expect(b).not.toBeNull()
     expect(c).not.toBeNull()
-    expect(a!.getAttribute('data-x')).toBe(b!.getAttribute('data-x'))
-    expect(a!.getAttribute('data-y')).not.toBe(b!.getAttribute('data-y'))
+    expect(a!.getAttribute('data-y')).toBe(b!.getAttribute('data-y'))
+    expect(a!.getAttribute('data-x')).not.toBe(b!.getAttribute('data-x'))
     expect(c!.getAttribute('data-waits-on')).toBe('a')
-    expect(c!.textContent).toContain('waits on: a')
+    expect(c!.textContent).toContain('等 a')
     expect(container.querySelector('[data-node-id="orphan"]')).toBeNull()
     expect(container.querySelector('[data-node-id="hanging"]')).toBeNull()
     expect(container.querySelectorAll('[data-edge="child"]')).toHaveLength(3)
-    expect(container.querySelector('[data-edge="depends"][data-from="a"][data-to="c"]')).not.toBeNull()
-    expect(container.querySelector('[data-edge="depends"][data-from="orphan"][data-to="a"]')).toBeNull()
-    expect(container.querySelector('[data-edge="depends"][data-from="a"][data-to="orphan"]')).toBeNull()
-    expect(a!.textContent).toContain('…')
+    expect(container.querySelector('[data-edge="depends"]')).toBeNull()
+    expect(a!.textContent).toContain('a-very-long-goal-label')
   })
 
   it('marks a needs-update node with the status class the stylesheet styles', () => {
@@ -67,9 +72,24 @@ describe('article tree graph DAG', () => {
         a: node({ id: 'a', type: 'write', status: 'needs-update', dependsOn: ['root'] }),
       },
     }
-    const { container } = render(<ArticleTreeGraph tree={tree} />)
+    const { container } = render(<ArticleTreeGraph tree={tree} sessionId="s1" t={t} />)
     const a = container.querySelector('[data-node-id="a"]')
     expect(a?.getAttribute('class')).toMatch(/needs-update/)
     expect(a?.textContent).toContain('needs-update')
+  })
+
+  it('keeps the parent-child edge attached when a node is dragged', () => {
+    const tree = dagTree()
+    const { container } = render(<ArticleTreeGraph tree={tree} sessionId="s1" t={t} />)
+    const a = container.querySelector('[data-node-id="a"]')!
+    const before = a.getAttribute('data-x')
+    const edge = container.querySelector('[data-edge="child"][data-from="root"][data-to="a"]')!
+    const pathBefore = edge.getAttribute('d')
+    fireEvent.pointerDown(a, { button: 0, clientX: 200, clientY: 200, pointerId: 1 })
+    fireEvent.pointerMove(window, { clientX: 280, clientY: 200, pointerId: 1 })
+    fireEvent.pointerUp(window, { pointerId: 1 })
+    expect(a.getAttribute('data-x')).not.toBe(before)
+    expect(edge.getAttribute('d')).not.toBe(pathBefore)
+    expect(container.querySelector('[data-edge="child"][data-from="root"][data-to="a"]')).toBe(edge)
   })
 })

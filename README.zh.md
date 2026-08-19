@@ -50,13 +50,13 @@
 | 规划 / 检索 / 成稿 | 一份越积越长的对话 | 分类型卡片：`write` / `think` / `task` |
 | 检索 | 同一会话继续调工具 | 可续跑的 `standard` 工人 |
 | 草稿 | 模型在对话里打出来的字 | 叶子 `write` 追加 `article.md` |
-| Web 界面 | 只有对话 | 可选侧栏 **拆卡树** |
+| Web 界面 | 只有对话 | 可选独立窗口 **拆卡树** |
 
 <p align="center">
-  <img src="docs/card-tree.png" alt="拆卡树侧栏示意图：从「什么是 ReAct？」根节点长出 write / think / task 卡" width="100%">
+  <img src="docs/card-tree.png" alt="拆卡树窗口示意图：从「什么是 ReAct？」根节点长出 write / think / task 卡" width="100%">
 </p>
 
-<p align="center"><sub>Web 界面示意图。卡片颜色与真实侧栏一致（write / think / task / needs-update）。不是某次私人会话的实拍。</sub></p>
+<p align="center"><sub>Web 界面示意图。卡片颜色与真实窗口一致（write / think / task / needs-update）。不是某次私人会话的实拍。</sub></p>
 
 所以它是 **Agent Driver**（`AgentLoop.prepare` 可以选的另一种构造器），不是默认循环上的 `article_*` 工具包。
 
@@ -124,7 +124,7 @@ dsh plugin --profile web remove dsh-agent-driver-writehere
 1. 启动 profile：`dsh --profile web`（或 `dsh web`）。
 2. 新会话，选 **技术博客博主**（`article-editor`）。只给这一路绑 WriteHere。
 3. 发一个题目，不要发一条 shell 命令。
-4. 打开侧栏 **拆卡树**。调度器拆卡、执行时，树会往右长。
+4. 点侧栏页脚打开 **拆卡树**。独立可拖动窗口、无限画布：拖卡片拉开或聚拢，父子连线跟着走。默认从上往下展开。
 5. 叶子 `write` 追加进 `article.md`。`task` 交给 `standard` 工人，等回报。
 
 主编不会开终端。需要跑命令、读仓库、调外部 API，一律写成 `task` 卡。
@@ -255,7 +255,7 @@ GetInfo 的 **JSON 形状**（节点、祖先、依赖、本稿、规划拍的�
 - 先 Update **当前选中节点** 的 goal，再决定或执行
 - 依赖刚完成时进入 `needs-update`
 - 叶子 write 增量写入工作区草稿
-- Web 侧栏 **拆卡树**（`ui-article-tree`，可选）
+- Web 独立窗口 **拆卡树**（`ui-article-tree`，可选）
 - 附带 preset **`article-editor`**（界面名：技术博客博主）
 
 ## 不适合做什么
@@ -284,7 +284,7 @@ GetInfo 的 **JSON 形状**（节点、祖先、依赖、本稿、规划拍的�
 
 - `agent-drivers` — 宿主平面的构造器注册表（`ctx.agentDrivers`）
 - `writehere` — 注册 `WriteHereAgent`，绑定 preset `article-editor`；宿主自己还不会查 driver 时，再包一层 stock `AgentLoop.prepare`
-- `ui-article-tree` — Web 侧栏；在 headless 上为空操作
+- `ui-article-tree` — Web 拆卡树窗口；在 headless 上为空操作
 
 `register` 与 `bindPreset` 必须在**宿主**上下文、任何会话创建之前执行。它们不能放进 preset：preset 在 `new Agent` 之后才 mount。
 
@@ -309,7 +309,7 @@ docs/                      README 封面、拆卡树示意图、一拍流程图
 packages/agent-drivers     ctx.agentDrivers 注册表
 packages/article-tree      树、GetInfo、草稿辅助
 packages/writehere         WriteHereAgent 与 Algorithm 1 调度器
-packages/ui-article-tree   Web 拆卡树侧栏
+packages/ui-article-tree   Web 拆卡树窗口
 presets/article-editor     人设与 skills（无工具）
 cordis.patch.yml           `dsh plugin add` 叠上去的那一层
 ```

@@ -47,6 +47,7 @@ const external = [
   '@deepseek-ai/*',
   'zod',
   'react',
+  'react-dom',
   'react/jsx-runtime',
 ]
 

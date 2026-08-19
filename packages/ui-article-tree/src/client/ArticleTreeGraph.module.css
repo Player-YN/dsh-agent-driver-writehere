@@ -1,17 +1,132 @@
-.svg { display: block; width: 100%; height: 220px; }
-.edge { fill: none; stroke: #64748b; stroke-width: 1.8; }
-.depEdge { fill: none; stroke: #f59e0b; stroke-width: 1.6; stroke-dasharray: 5 3; }
-.box { stroke-width: 1.5; }
-.write .box { fill: #0f2744; stroke: #3b82f6; }
-.think .box { fill: #221a3a; stroke: #a78bfa; }
-.search .box { fill: #0f2a22; stroke: #34d399; }
-.task .box { fill: #0f2a22; stroke: #34d399; }
-.blocked .box { stroke-dasharray: 4 3; opacity: 0.65; }
-.needs-update .box { stroke: #f59e0b; stroke-dasharray: 5 3; }
-.needs-update .status { fill: #fbbf24; }
-.kind { fill: #93c5fd; font-size: 9px; font-weight: 700; }
-.search .kind { fill: #6ee7b7; }
-.think .kind { fill: #ddd6fe; }
-.status { fill: #94a3b8; font-size: 9px; }
-.goal { fill: #e5e7eb; font-size: 11px; }
-.waits { fill: #fbbf24; font-size: 9px; }
+.viewport {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  background:
+    radial-gradient(circle at 1px 1px, rgba(148, 163, 184, 0.16) 1px, transparent 0) 0 0 / 28px 28px;
+}
+
+.viewport:active {
+  cursor: grabbing;
+}
+
+.world {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform-origin: 0 0;
+  will-change: transform;
+}
+
+.edges {
+  position: absolute;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.edge {
+  fill: none;
+  stroke: #64748b;
+  stroke-width: 2;
+}
+
+.node {
+  position: absolute;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 10px 8px;
+  border: 1.5px solid #3b82f6;
+  border-radius: 10px;
+  background: #0f2744;
+  color: #e5e7eb;
+  cursor: grab;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+}
+
+.node:active {
+  cursor: grabbing;
+}
+
+.think {
+  background: #221a3a;
+  border-color: #a78bfa;
+}
+
+.search,
+.task {
+  background: #0f2a22;
+  border-color: #34d399;
+}
+
+.blocked {
+  opacity: 0.62;
+  border-style: dashed;
+}
+
+.done {
+  opacity: 0.78;
+}
+
+.running {
+  box-shadow: 0 0 0 2px #34d399, 0 10px 28px rgba(52, 211, 153, 0.28);
+}
+
+.needs-update {
+  border-color: #f59e0b;
+  border-style: dashed;
+}
+
+.needs-update .status {
+  color: #fbbf24;
+}
+
+.meta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.kind {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #93c5fd;
+}
+
+.think .kind {
+  color: #ddd6fe;
+}
+
+.search .kind,
+.task .kind {
+  color: #6ee7b7;
+}
+
+.status {
+  font-size: 10px;
+  color: #94a3b8;
+}
+
+.goal {
+  margin: 0;
+  font-size: 12px;
+  line-height: 16px;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.wait {
+  margin: 0;
+  font-size: 10px;
+  line-height: 14px;
+  color: #fbbf24;
+}

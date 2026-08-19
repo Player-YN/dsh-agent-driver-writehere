@@ -50,13 +50,13 @@ Long-form agents on a stock ReAct loop tend to flatten. The model outlines, then
 | Plan / retrieve / write | One growing transcript | Typed cards: `write` / `think` / `task` |
 | Retrieval | Same session, more tool calls | Continuable `standard` worker |
 | Draft | Whatever the model typed | Leaf `write` nodes append `article.md` |
-| Web UI | Chat only | Optional **Card tree** sidebar |
+| Web UI | Chat only | Optional **Card tree** window |
 
 <p align="center">
-  <img src="docs/card-tree.png" alt="Schematic of the Card tree sidebar: write, think, and task cards growing from a What is ReAct? root" width="100%">
+  <img src="docs/card-tree.png" alt="Schematic of the Card tree window: write, think, and task cards growing from a What is ReAct? root" width="100%">
 </p>
 
-<p align="center"><sub>Schematic of the Web UI. Card colors match the live sidebar (write / think / task / needs-update). Not a live capture of a private session.</sub></p>
+<p align="center"><sub>Schematic of the Web UI. Card colors match the live window (write / think / task / needs-update). Not a live capture of a private session.</sub></p>
 
 That is why this is an **agent driver** (`AgentLoop.prepare` can choose this constructor), not a bag of `article_*` tools on the default loop.
 
@@ -124,7 +124,7 @@ This package is not on the npm registry yet. If a profile already composes this 
 1. Start the profile: `dsh --profile web` (or `dsh web`).
 2. New session → pick **技术博客博主** (`article-editor`). That binds WriteHere for this session only.
 3. Send a topic, not a shell command.
-4. Open the sidebar **Card tree**. Nodes grow as the scheduler splits and executes.
+4. Open **Card tree** from the sidebar footer. It is a draggable window on an infinite canvas: drag cards apart or together; parent–child links stay attached. The default layout is top-down.
 5. Leaf `write` nodes append to `article.md`. `task` nodes hand work to a `standard` worker and wait for the report.
 
 The editor never opens a terminal. If you need a command, a repo read, or an external API, that is a `task` card’s job.
@@ -255,7 +255,7 @@ To give the column a new capability (fetch a site, call an API, typeset):
 - Paper-style Update of **the selected node** before decide or execute
 - `needs-update` when dependencies just completed
 - Incremental workspace draft from leaf writes
-- Optional Web sidebar **Card tree** (`ui-article-tree`)
+- Optional Web **Card tree** window (`ui-article-tree`)
 - Shipped preset **`article-editor`** (display name: 技术博客博主)
 
 ## What it is not
@@ -284,7 +284,7 @@ This repository is a DSH **bundle**: `package.json` declares `"dsh": { "bundle":
 
 - `agent-drivers` — host-plane constructor registry (`ctx.agentDrivers`)
 - `writehere` — registers `WriteHereAgent`, binds preset `article-editor`, and wraps stock `AgentLoop.prepare` when the host does not already look up drivers
-- `ui-article-tree` — Web sidebar; a no-op on headless
+- `ui-article-tree` — Web Card tree window; a no-op on headless
 
 `register` and `bindPreset` run on the **host** context before any session is created. They cannot live in the preset: the preset mounts after `new Agent`.
 
@@ -309,7 +309,7 @@ docs/                      README banner, Card tree schematic, tick diagram
 packages/agent-drivers     ctx.agentDrivers registry
 packages/article-tree      tree, GetInfo, draft helpers
 packages/writehere         WriteHereAgent and Algorithm 1 scheduler
-packages/ui-article-tree   Web Card tree sidebar
+packages/ui-article-tree   Web Card tree window
 presets/article-editor     persona and skills (no tools)
 cordis.patch.yml           layer applied by `dsh plugin add`
 ```

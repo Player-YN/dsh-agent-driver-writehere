@@ -1,5 +1,6 @@
 import { useSyncExternalStore } from 'react'
 import type { ClientContext } from '@deepseek-ai/dsh-client-runtime/client'
+import { ArticleTreePanel } from './ArticleTreePanel.tsx'
 import { isArticleTreeOpen, subscribeArticleTreeOpen, toggleArticleTreeOpen } from './store.ts'
 import { isEditorSession } from './editor-session.ts'
 import type { ArticleTreeKey } from './locales.ts'
@@ -22,14 +23,17 @@ export function TreeToggle({
   const open = useSyncExternalStore(subscribeArticleTreeOpen, isArticleTreeOpen, isArticleTreeOpen)
   if (!editor) return null
   return (
-    <button
-      type="button"
-      className={css.btn}
-      aria-pressed={open}
-      aria-label={t('toggle.open')}
-      onClick={() => { toggleArticleTreeOpen() }}
-    >
-      {wide ? t('toggle.label') : '树'}
-    </button>
+    <>
+      <button
+        type="button"
+        className={css.btn}
+        aria-pressed={open}
+        aria-label={open ? t('toggle.close') : t('toggle.open')}
+        onClick={() => { toggleArticleTreeOpen() }}
+      >
+        {wide ? t('toggle.label') : '树'}
+      </button>
+      <ArticleTreePanel ctx={ctx} t={t} />
+    </>
   )
 }
