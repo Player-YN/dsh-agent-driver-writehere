@@ -83,7 +83,7 @@ dsh plugin --profile web add github:Player-YN/dsh-agent-driver-writehere
 dsh --profile web
 ```
 
-这一条会把本仓库装进 `web` profile、登记 bundle，并拉下 `zod`。插件第一次加载时，只有 `~/.dsh/.agent-presets/article-editor` **还不存在** 才会拷出厂 preset。然后：新会话 → 选 **article-editor**（技术博客博主）。
+这一条会把本仓库装进 `web` profile、登记 bundle，并拉下 `zod`。插件第一次加载时，只有 `~/.dsh/.agent-presets/article-editor` **还不存在** 才会拷出厂 preset，并注册 WriteHere driver、把该 preset 绑上去。标准模式 / PTC / 极简 / 创造仍走默认 React。然后：新会话 → 选手动 **技术博客博主**（`article-editor`）。这个会话会构造 `WriteHereAgent`，不会掉回 React。
 
 钉死某个 commit，避免 `main` 一推安装物就变：
 
@@ -122,7 +122,7 @@ dsh plugin --profile web remove dsh-agent-driver-writehere
 **请用 Web。**
 
 1. 启动 profile：`dsh --profile web`（或 `dsh web`）。
-2. 新会话，选 preset **article-editor**（技术博客博主）。
+2. 新会话，选 **技术博客博主**（`article-editor`）。只给这一路绑 WriteHere。
 3. 发一个题目，不要发一条 shell 命令。
 4. 打开侧栏 **拆卡树**。调度器拆卡、执行时，树会往右长。
 5. 叶子 `write` 追加进 `article.md`。`task` 交给 `standard` 工人，等回报。
@@ -266,24 +266,24 @@ GetInfo 的 **JSON 形状**（节点、祖先、依赖、本稿、规划拍的�
 - 要一份与 [principia-ai/WriteHERE](https://github.com/principia-ai/WriteHERE) 逐文件对应的 Python 移植。这是按算法重写的 TypeScript 实现。
 - 只想在默认循环上多几个 `article_decompose` / `article_write` 之类的 ReAct 函数。
 - 希望 headless 一枪把检索跑完。`task` 卡会 park，工人不会在同一次 `dsh` 进程里结束。**完整交互入口是 Web。**
-- 在始终 `new ReactLoopAgent` 的原版 `AgentLoop` 上当即当成 WriteHERE。见 [环境要求](#环境要求)。
 
 ## 环境要求
 
 - 已安装 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) 的 `dsh` 命令
-- 宿主的 `AgentLoop.prepare` 会解析 `ctx.agentDrivers` 并用该类构造 Agent。没有这步查找时，bundle 可以装上，会话仍会建成 `ReactLoopAgent`。应有的钩子见 [`patches/agent-loop-prepare.snippet.ts`](patches/agent-loop-prepare.snippet.ts)。
 - 活跑需要 profile 里已配置好的模型密钥
+
+在官方 DSH 上，本插件会包一层 `AgentLoop.prepare`：绑了的 preset 构造 `WriteHereAgent`；没绑的仍走 `ReactLoopAgent`。宿主自己已经查 `ctx.agentDrivers` 时（见 [`patches/agent-loop-prepare.snippet.ts`](patches/agent-loop-prepare.snippet.ts)）不会再包一层。
 
 `dsh plugin --profile <名字> add` 会把参数转发给 `$DSH_HOME/profiles/<名字>` 里的 **pnpm**。这是官方插件安装路径，见[打包并安装插件](https://github.com/deepseek-ai/deepseek-harness/blob/master/docs/user/develop/basic/publish.zh.md)。
 
-如果新建的 `article-editor` 会话仍像会调工具的编程助手，说明宿主还没有上述 prepare 钩子。只把 bundle 装进 profile 不够。
+如果新建的 **技术博客博主** 会话仍像会调工具的编程助手，说明这层包装没挂上。请带上 `dsh --profile web --dump-config` 和会话日志开 issue。
 
 ## 工作原理
 
 本仓库是 DSH **bundle**：`package.json` 声明 `"dsh": { "bundle": { "patch": "./cordis.patch.yml" } }`。装进 profile 后会多一层配置，插入三个插件：
 
 - `agent-drivers` — 宿主平面的构造器注册表（`ctx.agentDrivers`）
-- `writehere` — 注册 `WriteHereAgent`，并把 preset `article-editor` 绑到它
+- `writehere` — 注册 `WriteHereAgent`，绑定 preset `article-editor`；宿主自己还不会查 driver 时，再包一层 stock `AgentLoop.prepare`
 - `ui-article-tree` — Web 侧栏；在 headless 上为空操作
 
 `register` 与 `bindPreset` 必须在**宿主**上下文、任何会话创建之前执行。它们不能放进 preset：preset 在 `new Agent` 之后才 mount。

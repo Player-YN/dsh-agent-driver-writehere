@@ -83,7 +83,7 @@ dsh plugin --profile web add github:Player-YN/dsh-agent-driver-writehere
 dsh --profile web
 ```
 
-That clones this repository into the `web` profile, registers the bundle, and installs `zod`. The first time the plugin loads, it copies **article-editor** into `~/.dsh/.agent-presets/` only if that folder does not already exist. Then: New session → preset **article-editor** (技术博客博主).
+That clones this repository into the `web` profile, registers the bundle, and installs `zod`. The first time the plugin loads, it copies **article-editor** into `~/.dsh/.agent-presets/` only if that folder does not already exist, registers the WriteHere driver, and binds that preset to it. React stays the default for 标准模式 / PTC / 极简 / 创造. Then: New session → pick **技术博客博主** (`article-editor`). That session constructs `WriteHereAgent`; it will not fall back to React.
 
 Pin a commit so `main` cannot move under you:
 
@@ -122,7 +122,7 @@ This package is not on the npm registry yet. If a profile already composes this 
 **Web** is the intended path.
 
 1. Start the profile: `dsh --profile web` (or `dsh web`).
-2. New session → preset **article-editor** (技术博客博主).
+2. New session → pick **技术博客博主** (`article-editor`). That binds WriteHere for this session only.
 3. Send a topic, not a shell command.
 4. Open the sidebar **Card tree**. Nodes grow as the scheduler splits and executes.
 5. Leaf `write` nodes append to `article.md`. `task` nodes hand work to a `standard` worker and wait for the report.
@@ -266,24 +266,24 @@ Skip this package if you want any of the following:
 - A file-for-file clone of [principia-ai/WriteHERE](https://github.com/principia-ai/WriteHERE). This is a new TypeScript implementation of the algorithm.
 - Extra ReAct functions (`article_decompose`, `article_write`, …) bolted onto the default loop.
 - A headless one-shot that finishes retrieval in a single process. A `task` card parks; the worker does not complete inside that same `dsh` invocation. **Web is the full interactive entry.**
-- Drop-in WriteHERE on a stock `AgentLoop` that always constructs `ReactLoopAgent`. See [Requirements](#requirements).
 
 ## Requirements
 
 - [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) with the `dsh` CLI
-- A host where `AgentLoop.prepare` resolves `ctx.agentDrivers` and constructs that class. Without the lookup, this bundle can load and the session still constructs `ReactLoopAgent`. The expected hook is in [`patches/agent-loop-prepare.snippet.ts`](patches/agent-loop-prepare.snippet.ts).
 - A live model provider (the key your profile already uses)
+
+On stock DSH the plugin wraps `AgentLoop.prepare` so a bound preset constructs `WriteHereAgent`. Unbound presets still use `ReactLoopAgent`. Hosts that already look up `ctx.agentDrivers` (this repo’s snippet in [`patches/agent-loop-prepare.snippet.ts`](patches/agent-loop-prepare.snippet.ts)) are left unchanged.
 
 `dsh plugin --profile <name> add` forwards to **pnpm** inside `$DSH_HOME/profiles/<name>`. That is the official plugin path; see [Package and install a plugin](https://github.com/deepseek-ai/deepseek-harness/blob/master/docs/user/develop/basic/publish.md).
 
-If a new `article-editor` session still behaves like a tool-using coder, the host is missing that prepare hook. Loading the bundle is not enough.
+If a new **技术博客博主** session still behaves like a tool-using coder, the wrap did not attach. File an issue with `dsh --profile web --dump-config` and the session log.
 
 ## How it works
 
 This repository is a DSH **bundle**: `package.json` declares `"dsh": { "bundle": { "patch": "./cordis.patch.yml" } }`. Installing it appends a configuration layer that inserts three plugins:
 
 - `agent-drivers` — host-plane constructor registry (`ctx.agentDrivers`)
-- `writehere` — registers `WriteHereAgent` and binds preset `article-editor`
+- `writehere` — registers `WriteHereAgent`, binds preset `article-editor`, and wraps stock `AgentLoop.prepare` when the host does not already look up drivers
 - `ui-article-tree` — Web sidebar; a no-op on headless
 
 `register` and `bindPreset` run on the **host** context before any session is created. They cannot live in the preset: the preset mounts after `new Agent`.

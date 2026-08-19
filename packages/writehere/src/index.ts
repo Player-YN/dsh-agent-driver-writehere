@@ -5,9 +5,10 @@
 
 import type { Context } from '@deepseek-ai/cordis'
 import type {} from '@deepseek-ai/dsh-agent-drivers'
-import { WRITEHERE_DRIVER_ID } from './ids.ts'
+import { WRITEHERE_BOUND_PRESETS, WRITEHERE_DRIVER_ID } from './ids.ts'
 import { WriteHereAgent } from './agent.ts'
 import { installShippedPreset } from './install-preset.ts'
+import { hookAgentLoopPrepare } from './prepare-hook.ts'
 import type {} from './types.ts'
 
 // Re-export the session-event augmentations: a bare `import type {}` is elided
@@ -16,7 +17,7 @@ import type {} from './types.ts'
 export type * from './types.ts'
 
 export { WriteHereAgent } from './agent.ts'
-export { WRITEHERE_DRIVER_ID } from './ids.ts'
+export { WRITEHERE_BOUND_PRESETS, WRITEHERE_DRIVER_ID } from './ids.ts'
 export { methodologySkillContext, METHODOLOGY_MARKERS } from './skills.ts'
 export {
   DECIDE_RESPONSE_FORMAT,
@@ -57,6 +58,12 @@ export const inject = ['agentDrivers']
 export function apply(ctx: Context): void {
   installShippedPreset()
   ctx.agentDrivers.register(WRITEHERE_DRIVER_ID, WriteHereAgent)
-  ctx.agentDrivers.bindPreset('article-editor', WRITEHERE_DRIVER_ID)
-  ctx.agentDrivers.bindPreset('xieka', WRITEHERE_DRIVER_ID)
+  for (const presetId of WRITEHERE_BOUND_PRESETS) {
+    ctx.agentDrivers.bindPreset(presetId, WRITEHERE_DRIVER_ID)
+  }
+  // Stock AgentLoop always constructs ReactLoop. Wrap it when present; if the
+  // loop plugin mounts later, hook then. React stays the default for unbound presets.
+  ctx.inject(['agentLoop'], (ready) => {
+    hookAgentLoopPrepare(ready)
+  })
 }

@@ -1,6 +1,6 @@
 {
   "name": "dsh-agent-driver-writehere",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Hierarchical long-form writing for DeepSeek Harness — WriteHERE as an agent driver, not extra ReAct tools.",
   "license": "MIT",
   "type": "module",

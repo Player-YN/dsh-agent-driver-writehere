@@ -1,11 +1,13 @@
 /**
- * Required host hook. Paste into DeepSeek Harness
+ * Optional host-side lookup. Paste into DeepSeek Harness
  * `packages/core/agent-loop` prepare(), where the Agent is constructed.
  *
- * Stock DSH always does `new ReactLoopAgent(...)`. Without this lookup the
- * WriteHERE bundle can load and still never run — the editor stays ReAct.
+ * Stock DSH always does `new ReactLoopAgent(...)`. The writehere plugin wraps
+ * that prepare at load time so one-click install works without this paste.
+ * Keep the snippet if you would rather the host own the lookup.
  *
- * This checkout of deepseek-harness already contains the hook.
+ * This checkout of deepseek-harness already contains the hook. The plugin
+ * detects that (`prepare` source contains `agentDrivers`) and does not wrap.
  */
 
 import type { Agent } from '@deepseek-ai/dsh-agent'

@@ -1,6 +1,6 @@
 # @deepseek-ai/dsh-writehere
 
-Host-plane WriteHERE editor driver. The plugin injects `ctx.agentDrivers`, registers `WriteHereAgent` as `writehere`, and binds session header `agentPreset: article-editor` to that constructor. `AgentLoop.prepare` then constructs `WriteHereAgent` instead of `ReactLoopAgent`. Standard and other unbound presets stay on `ReactLoopAgent`.
+Host-plane WriteHERE editor driver. The plugin injects `ctx.agentDrivers`, registers `WriteHereAgent` as `writehere`, and binds session header `agentPreset: article-editor` (and `xieka`) to that constructor. On stock DSH it also wraps `AgentLoop.prepare` so those presets construct `WriteHereAgent`. Standard and other unbound presets stay on `ReactLoopAgent`. React is not disabled.
 
 Register and bind must run on the host context (this bundle plugin). They cannot live in the article-editor preset: the preset mounts after `new Agent`.
 
